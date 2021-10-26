@@ -1,0 +1,22 @@
+# Set up OpenVPN on offsite VM
+---
+- name: Install openVPN on host
+  hosts: cac-01.jlumley.com
+  gather_facts: true
+  roles:
+    - name: Install Common Development Tools
+      role: common
+
+    - name: Install speedtest-cli
+      role: darkwizard242.speedtest
+
+    - name: Install OpenVPN
+      role: kyl191.openvpn
+      openvpn_port: 443
+      openvpn_proto: tcp
+      openvpn_sync_certs: true
+      openvpn_compression:
+      
+      clients:
+        - jeremys-iphone
+        - jessicas-iphone

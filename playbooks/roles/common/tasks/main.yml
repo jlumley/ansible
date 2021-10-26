@@ -1,0 +1,20 @@
+---
+- name: Upgrade all packages
+  package:
+    name: "*"
+    state: latest
+
+- name: Install Git
+  package:
+    name: "git"
+    state: latest
+
+- name: Install Vim
+  package:
+    name: "vim"
+    state: latest
+
+- name: Install netcat
+  package:
+    name: "netcat"
+    state: latest
