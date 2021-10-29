@@ -1,0 +1,134 @@
+---
+- name: Ensure backup script dir exists
+  file:
+    path: /srv/mgmt
+    state: directory
+
+- name: Ensure secrets dir exists
+  file:
+    path: /secrets
+    state: directory
+    owner: admin
+    group: admin
+    mode: 0700
+
+- name: Create BorgBase SSH keys for admin user
+  community.crypto.openssh_keypair:
+    comment: ssh keys for BorgBase backups
+    owner: admin
+    group: admin
+    path: /secrets/borgbase_rsa_key
+  register: bb_ssh_keygen
+
+# https://github.com/borgbase/ansible-role-borgbackup/blob/aa5830aca0b650278142b1ed09a0c461a9940a69/library/borgbase.py#L93
+- name: Get ssh ids from BorgBase.com
+  uri:
+    url: https://api.borgbase.com/graphql
+    method: POST
+    body_format: json
+    body: '{ "query": "{ sshList {id}}" }'
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ borgbase_api_token }}"
+  register: bb_ssh_list
+
+- name: Get repo ids from BorgBase.com
+  uri:
+    url: https://api.borgbase.com/graphql
+    method: POST
+    body_format: json
+    body: '{ "query": "{ repoList {id}}" }'
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ borgbase_api_token }}"
+  register: bb_repo_list
+
+- name: Add New SSH key ot BorgBase.com
+  uri:
+    url: https://api.borgbase.com/graphql
+    method: POST
+    body_format: json
+    body: '{ "query": "mutation {sshAdd(name: \"{{ inventory_hostname_short }}\" keyData: \"{{ bb_ssh_keygen.public_key }}\" ) {keyAdded {id }} }" }'
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ borgbase_api_token }}"
+  register: bb_new_key
+
+- name: Add New SSH key to repos
+  uri:
+    url: https://api.borgbase.com/graphql
+    method: POST
+    body_format: json
+    body: '{ "query": "mutation { repoEdit(id: \"{{ item.id }}\" fullAccessKeys: [\"{{ bb_new_key.json.data.sshAdd.keyAdded.id }}\"] ) { repoEdited {id}} }" }'
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ borgbase_api_token }}"
+  with_items:
+    - "{{ bb_repo_list.json.data.repoList }}"
+
+- name: Remove old SSH keys
+  uri:
+    url: https://api.borgbase.com/graphql
+    method: POST
+    body_format: json
+    body: '{ "query": "mutation {sshDelete(id: {{item.id}} ) {ok}} " }'
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ borgbase_api_token }}"
+  with_items:
+    - "{{ bb_ssh_list.json.data.sshList }}"
+
+- name: Create borg backup script
+  template:
+    src: default.j2
+    dest: /srv/mgmt/borg_backup_{{ item.name }}.sh
+    owner: admin
+    group: admin
+    mode: 0700
+  loop:
+    - {
+        borgbase_repo: fs08gr7x@fs08gr7x.repo.borgbase.com:repo,
+        backup_paths: /srv/config/sonarr/Backups/ /srv/config/radarr/Backups/ /srv/config/lidarr/Backups/ /srv/config/prowlarr/Backups/ /srv/config/qbittorrent/ /srv/config/plex/,
+        repo_key: "{{ borgbase_media_repo_key }}",
+        name: jlumley-media,
+        keep_hourly: 2,
+        keep_daily: 2,
+        keep_weekly: 1,
+        keep_monthly: 1,
+      }
+    - {
+        borgbase_repo: htkie3uk@htkie3uk.repo.borgbase.com:repo,
+        backup_paths: /srv/config/home-assistant/ /srv/config/frigate/ /srv/config/mosquitto/config/ /srv/config/nginx/ /srv/config/unifi/data/backup/ /srv/config/dashboard/,
+        repo_key: "{{ borgbase_infrastructure_repo_key }}",
+        name: jlumley-infrastructure,
+        keep_hourly: 2,
+        keep_daily: 2,
+        keep_weekly: 1,
+        keep_monthly: 1,
+      }
+    - {
+        borgbase_repo: awg968od@awg968od.repo.borgbase.com:repo,
+        backup_paths: /data/frigate/clips,
+        repo_key: "{{ borgbase_frigate_repo_key }}",
+        name: jlumley-frigate,
+        keep_hourly: 1,
+        keep_daily: 2,
+        keep_weekly: 0,
+        keep_monthly: 0,
+      }
+
+# TODO: Test BorgBase repo keys
+# TODO: Fail test when repo key is invalid
+- name: Test all BorgBase keys/credentials
+  shell:
+    cmd: "/srv/mgmt/borg_backup_{{ item }}.sh test"
+  become: yes
+  become_user: admin
+  register: result
+  failed_when: result.rc != 0
+  loop:
+    - jlumley-media
+    - jlumley-infrastructure
+    - jlumley-frigate
+# TODO: Set up cronjob to backup data
+

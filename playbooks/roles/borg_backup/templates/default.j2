@@ -1,0 +1,23 @@
+# managed by ansible
+
+DATE=`date +%Y-%h-%d-%H:%M`
+export BORG_PASSPHRASE={{ item.repo_key }}
+eval $(ssh-agent) > /dev/null
+ssh-add -q /secrets/borgbase_rsa_key
+
+# test repo keys
+if [ $1 == "test" ]; then
+  set -e
+  borg info {{ item.borgbase_repo }} --last 1
+  kill "${SSH_AGENT_PID}"
+  exit 0
+
+fi; 
+
+
+echo "Pruning old repo snapshots"
+borg prune --keep-hourly {{ item.keep_hourly }} --keep-daily {{ item.keep_daily }} --keep-weekly {{ item.keep_weekly }} --keep-monthly {{ item.keep_monthly }} {{ item.borgbase_repo }}
+echo "Creating backup"
+borg create  --compression lz4 --exclude "*.log" --exclude "*logs*"  --exclude "*.bash_history" --exclude "*.key" --exclude "*.pem" {{ item.borgbase_repo }}::auto-${DATE} {{ item.backup_paths }}
+
+kill "${SSH_AGENT_PID}"

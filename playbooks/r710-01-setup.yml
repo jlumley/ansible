@@ -1,0 +1,27 @@
+---
+- name: Setup Sonarr/Radarr/Plex/Qbittorent
+  hosts: jlumley-r710-01.jlumley.local
+  gather_facts: true
+
+  vars_prompt:
+    - name: borgbase_media_repo_key
+      prompt: Enter BorgBase.com Media Repo Key
+    - name: borgbase_infrastructure_repo_key
+      prompt: Enter BorgBase.com Infrastructure Repo Key
+    - name: borgbase_frigate_repo_key
+      prompt: Enter BorgBase.com Frigate Repo Key
+    - name: borgbase_api_token
+      prompt: Enter BorgBase.com API Token
+
+  roles:
+    - name: Install Common Development Tools
+      role: common
+
+    - name: Install speedtest-cli
+      role: darkwizard242.speedtest
+
+    - name: Add users
+      role: add_users
+
+    - name: Set up Borg Backups
+      role: borg_backup

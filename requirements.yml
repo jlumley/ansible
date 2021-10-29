@@ -6,3 +6,9 @@ roles:
   - name: kyl191.openvpn
     version: v0.9.1
 
+  - name: m3nu.ansible_role_borgbackup
+    version: v0.8.1
+
+collections:
+  - name: community.crypto
+    version: 1.9.5

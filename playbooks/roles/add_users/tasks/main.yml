@@ -1,0 +1,100 @@
+---
+# Creating the following users:
+# - admin
+# - media
+# - nginx
+# - home-assistant
+# - unifi
+# - mosquitto
+# - frigate
+
+- name: Create admin group on host
+  ansible.builtin.group:
+    name: admin
+    gid: 2020
+    state: present
+
+- name: Create admin user on host
+  ansible.builtin.user:
+    name: admin
+    group: admin
+    uid: 2020
+    shell: /bin/bash
+
+- name: Create media group on host
+  ansible.builtin.group:
+    name: media
+    gid: 2001
+    state: present
+
+- name: Create media user on host
+  ansible.builtin.user:
+    name: media
+    group: media
+    uid: 2001
+    shell: /bin/bash
+
+- name: Create nginx group on host
+  ansible.builtin.group:
+    name: nginx
+    gid: 2007
+    state: present
+
+- name: Create nginx user on host
+  ansible.builtin.user:
+    name: nginx
+    group: nginx
+    uid: 2006
+    shell: /bin/bash
+
+- name: Create home-assistant group on host
+  ansible.builtin.group:
+    name: home-assistant
+    gid: 2009
+    state: present
+
+- name: Create home-assistant user on host
+  ansible.builtin.user:
+    name: home-assistant
+    group: home-assistant
+    uid: 2009
+    shell: /bin/bash
+
+- name: Create unifi group on host
+  ansible.builtin.group:
+    name: unifi
+    gid: 2010
+    state: present
+
+- name: Create unifi user on host
+  ansible.builtin.user:
+    name: unifi
+    group: unifi
+    uid: 2010
+    shell: /bin/bash
+
+- name: Create mosquitto group on host
+  ansible.builtin.group:
+    name: mosquitto
+    gid: 1883
+    state: present
+
+- name: Create mosquitto user on host
+  ansible.builtin.user:
+    name: mosquitto
+    group: mosquitto
+    uid: 1883
+    shell: /bin/bash
+
+- name: Create frigate group on host
+  ansible.builtin.group:
+    name: frigate
+    gid: 2022
+    state: present
+
+- name: Create frigate user on host
+  ansible.builtin.user:
+    name: frigate
+    group: frigate
+    uid: 2022
+    shell: /bin/bash
