@@ -1,4 +1,6 @@
+#!/bin/bash
 # managed by ansible
+
 
 DATE=`date +%Y-%h-%d-%H:%M`
 export BORG_PASSPHRASE={{ item.repo_key }}
@@ -6,7 +8,7 @@ eval $(ssh-agent) > /dev/null
 ssh-add -q /secrets/borgbase_rsa_key
 
 # test repo keys
-if [ $1 == "test" ]; then
+if [[ $1 == "test" ]]; then
   set -e
   borg info {{ item.borgbase_repo }} --last 1
   kill "${SSH_AGENT_PID}"

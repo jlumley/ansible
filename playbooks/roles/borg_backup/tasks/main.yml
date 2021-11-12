@@ -119,16 +119,25 @@
 
 # TODO: Test BorgBase repo keys
 # TODO: Fail test when repo key is invalid
-- name: Test all BorgBase keys/credentials
-  shell:
-    cmd: "/srv/mgmt/borg_backup_{{ item }}.sh test"
-  become: yes
-  become_user: admin
-  register: result
-  failed_when: result.rc != 0
+#- name: Test all BorgBase keys/credentials
+#  shell:
+#    cmd: "/srv/mgmt/borg_backup_{{ item }}.sh test"
+#  become: yes
+#  become_user: admin
+#  register: result
+#  failed_when: result.rc != 0
+#  loop:
+#    - jlumley-media
+#    - jlumley-infrastructure
+#    - jlumley-frigate
+# TODO: Set up cronjob to backup data
+
+- name: Set up backup cronjobs
+  cron:
+    user: admin
+    special_time: hourly
+    job: /srv/mgmt/borg_backup_{{ item }}.sh
   loop:
     - jlumley-media
     - jlumley-infrastructure
     - jlumley-frigate
-# TODO: Set up cronjob to backup data
-
