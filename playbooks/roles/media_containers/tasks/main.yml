@@ -1,0 +1,156 @@
+# Creating the following Containers:
+# - vpn
+# - plex
+# - tautulli
+# - qbittorrent
+# - prowlarr
+# - sonarr
+# - radarr
+# - lidarr
+
+- name: Deploy PIA VPN client
+  docker_container:
+    name: wireguard-pia
+    image: thrnz/docker-wireguard-pia
+    pull: "{{ update_containers }}"
+    dns_servers:
+      - "{{ dns_server }}"
+    env:
+      LOC: "ca_ontario"
+      USER: "p1142923"
+      PASS: "{{ pia_password }}"
+      LOCAL_NETWORK: "192.168.67.0/24"
+      KEEP_ALIVE: "25"
+      VPNDNS: "1.1.1.1,9.9.9.9"
+      PORT_FORWARDING: "1"
+      PORT_PERSIST: "1"
+      FIREWALL: "0"
+    sysctls:
+      # wg-quick fails to set this without --privileged, so set it here instead if needed
+      net.ipv4.conf.all.src_valid_mark: 1
+      # May as well disable ipv6. Should be blocked anyway.
+      net.ipv6.conf.default.disable_ipv6: 1
+      net.ipv6.conf.all.disable_ipv6: 1
+      net.ipv6.conf.lo.disable_ipv6: 1
+    capabilities:
+      - NET_ADMIN
+      - SYS_MODULE
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    mounts:
+      - source: "/pia"
+        target: "/pia"
+        type: bind
+      - source: "/pia-shared"
+        target: "/pia-shared"
+        type: bind
+    published_ports:
+      - 9090:9090 # qbittorrent
+      - 9696:9696 # prowlarr
+      - 8989:8989 # sonarr
+      - 7878:7878 # radarr
+      - 8686:8686 # lidarr
+
+- name: Deploy Plex
+  docker_container:
+    name: plex
+    image: plexinc/pms-docker:latest
+    pull: "{{ update_containers }}"
+    dns_servers:
+      - "{{ dns_server }}"
+    network_mode: host
+    env:
+      PUID: "2001"
+      PGID: "2001"
+      VERIOSN: "plexpass"
+      PLEX_CLAIM: "{{ plex_claim }}"
+    mounts:
+      - source: "/srv/config/plex"
+        target: "/config"
+        type: bind
+      - source: "/data/plex-media/tv-shows"
+        target: "/tv"
+        type: bind
+      - source: "/data/plex-media/movies"
+        target: "/movies"
+        type: bind
+      - source: "/data/plex-media/music"
+        target: "/music"
+        type: bind
+      - source: "/data/plex-media/demos"
+        target: "/demos"
+        type: bind
+
+- name: Deploy Tautulli
+  docker_container:
+    name: tautulli
+    image: tautulli/tautulli
+    pull: "{{ update_containers }}"
+    dns_servers:
+      - "{{ dns_server }}"
+    env:
+      PUID: "2001"
+      PGID: "2001"
+      TZ: America/Toronto
+    published_ports:
+      - 8181:8181
+    mounts:
+      - source: "/srv/config/plex/Library/Application Support/Plex Media Server/Logs/PMS Plugin Logs"
+        target: "/plex_logs"
+        type: bind
+        read_only: yes
+      - source: "/srv/config/tautalli"
+        target: "/config"
+        type: bind
+
+- name: Deploy Torrent Client
+  docker_container:
+    name: qbittorrent
+    image: ghcr.io/linuxserver/qbittorrent
+    pull: "{{ update_containers }}"
+    env:
+      PUID: "2001"
+      PGID: "2001"
+      TZ: America/Toronto
+      WEBUI_PORT: "9090"
+    network_mode: "container:wireguard-pia"
+    mounts:
+      - source: "/srv/config/qbittorrent"
+        target: "/config"
+        type: bind
+      - source: "/data/torrents"
+        target: "/data/torrents"
+        type: bind
+      - source: "/data/blackhole"
+        target: "/data/blackhole"
+        type: bind
+
+- name: Deploy Media Managers
+  docker_container:
+    name: "{{ item.name }}"
+    image: "{{ item.image }}"
+    pull: "{{ update_containers }}"
+    env:
+      PUID: "2001"
+      PGID: "2001"
+      TZ: America/Toronto
+    network_mode: "container:wireguard-pia"
+    mounts:
+      - source: "/data"
+        target: "/data"
+        type: bind
+      - source: "/srv/config/{{ item.name }}"
+        target: "/config"
+        type: bind
+  loop:
+    - name: prowlarr
+      image: ghcr.io/linuxserver/prowlarr:develop
+    - name: sonarr
+      image: linuxserver/sonarr:latest
+    - name: radarr
+      image: linuxserver/radarr:nightly
+    - name: lidarr
+      image: linuxserver/lidarr:latest
