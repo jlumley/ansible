@@ -25,3 +25,6 @@
 
     - name: Set up Borg Backups
       role: borg_backup
+
+    - name: Install Docker-ce
+      role: geerlingguy.docker

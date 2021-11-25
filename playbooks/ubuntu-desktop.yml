@@ -1,11 +1,14 @@
 ---
-- name: Setup Sonarr/Radarr/Plex/Qbittorent
+- name: Setup jeremy-desktop-ubuntu
   hosts: jeremy-desktop-ubuntu.jlumley.local
   gather_facts: true
 
   roles:
     - name: Install Common Development Tools
       role: common
+    
+    - name: Install Ubuntu Desktop Apps
+      role: desktop_apps
 
     - name: Install speedtest-cli
       role: darkwizard242.speedtest

@@ -1,0 +1,32 @@
+---
+- name: Add gpg keys for App Repos
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  loop:
+    - "https://downloads.1password.com/linux/keys/1password.asc"
+    - "https://download.spotify.com/debian/pubkey_0D811D58.gpg"
+
+
+- name: Add Desktop App Repos
+  apt_repository:
+    state: present
+    filename: "{{ item.filename }}"
+    repo: "{{ item.repo }}"
+  loop:
+    - repo: "deb https://downloads.1password.com/linux/debian/amd64 stable main"
+      filename: "/etc/apt/sources.list.d/1password.list"
+    - repo: "deb http://repository.spotify.com stable non-free"
+      filename: "/etc/apt/sources.list.d/spotify.list"
+
+
+- name: Install Desktop Apps
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - "*"
+    - "ubuntu-restricted-extras"
+    - "1password"
+    - "spotify-client"
+
