@@ -1,5 +1,5 @@
 ---
-- name: Setup Sonarr/Radarr/Plex/Qbittorent
+- name: Setup jlumley-r710-01.jlumley.local
   hosts: jlumley-r710-01.jlumley.local
   gather_facts: true
 
