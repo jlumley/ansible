@@ -1,32 +1,28 @@
 ---
-- name: Add gpg keys for App Repos
-  apt_key:
-    url: "{{ item }}"
-    state: present
-  loop:
-    - "https://downloads.1password.com/linux/keys/1password.asc"
-    - "https://download.spotify.com/debian/pubkey_0D811D58.gpg"
+### Installing 1Password
 
+- name: Add gpg key for 1Password
+  shell: "curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --import"
+  register: one_pass_gpg
+  become: yes
+  become_user: pkg-builder
 
-- name: Add Desktop App Repos
-  apt_repository:
-    state: present
-    filename: "{{ item.filename }}"
-    repo: "{{ item.repo }}"
-  loop:
-    - repo: "deb https://downloads.1password.com/linux/debian/amd64 stable main"
-      filename: "/etc/apt/sources.list.d/1password.list"
-    - repo: "deb http://repository.spotify.com stable non-free"
-      filename: "/etc/apt/sources.list.d/spotify.list"
+- name: Install 1Password
+  become: yes
+  become_user: pkg-builder
+  kewlfft.aur.aur:
+    name: "1password"
 
+### Installing Spotify
+- name: Add gpg key for Spotify
+  shell: "curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | gpg --import"
+  become: yes
+  become_user: pkg-builder
 
-- name: Install Desktop Apps
-  package:
-    name: "{{ item }}"
-    state: latest
-  loop:
-    - "*"
-    - "ubuntu-restricted-extras"
-    - "1password"
-    - "spotify-client"
+- name: Install Spotiy
+  become: yes
+  become_user: pkg-builder
+  kewlfft.aur.aur:
+    name: "spotify"
+
 

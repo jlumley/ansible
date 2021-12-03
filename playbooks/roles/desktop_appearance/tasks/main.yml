@@ -1,0 +1,120 @@
+---
+# Set up gnome desktop theme
+#
+
+- name: Get Packages required for themes
+  package:
+    name: " {{item}} "
+    state: present
+  loop:
+    - "git" 
+
+- name: Create Themes Directory
+  become: yes
+  become_user: jlumley
+  file:
+    path: "/home/jlumley/.themes"
+    state: directory
+
+
+- name: Fetch theme source
+  become: yes
+  become_user: jlumley
+  git:
+    repo: "https://github.com/EliverLara/Sweet.git"
+    dest: "/home/jlumley/.themes/Sweet"
+    version: "nova"
+    force: yes
+    clone: yes
+
+- name: Create Icons Directory
+  become: yes
+  become_user: jlumley
+  file:
+    path: "/home/jlumley/.icons"
+    state: directory
+
+
+- name: Fetch theme source
+  become: yes
+  become_user: jlumley
+  git:
+    repo: "https://github.com/EliverLara/candy-icons.git"
+    dest: "/home/jlumley/.icons/Candy"
+    version: "outlined-folders"
+    force: yes
+    clone: yes
+
+
+## Adding Gnome Extentions
+#
+
+- name: Create Extentions Directory
+  become: yes
+  become_user: jlumley
+  file:
+    path: "/home/jlumley/.local/share/gnome-shell/extensions"
+    state: directory
+
+- name: Fetch Extension source
+  become: yes
+  become_user: jlumley
+  git:
+    repo: "{{item.repo}}"
+    dest: "{{item.dest}}"
+    version: "{{item.branch}}"
+    force: yes
+    clone: yes
+  loop:
+    - repo: "https://github.com/0ry0n/Resource_Monitor.git"
+      dest: "/tmp/resource_monitor"
+      branch: "gnome-40.0"
+    - repo: "https://github.com/rustysec/tidalwm.git"
+      dest: "/tmp/tidal-wm"
+      branch: "master"
+
+- name: Move Exentions to ext-dir
+  become: yes
+  become_user: jlumley
+  copy:
+    remote_src: yes
+    src: "{{item}}"
+    dest: "/home/jlumley/.local/share/gnome-shell/extensions/"
+  loop:
+    - "/tmp/resource_monitor/Resource_Monitor@Ory0n/"
+    - "/tmp/tidal-wm/"
+
+# Restart GNOME to reload themes and extentions 
+- name: Restart GNOME Shell 
+  command: 
+    cmd: "killall -3 gnome-shell"
+
+
+- name: Enable Extensions
+  command: 
+    cmd: "gnome-extensions enable {{item}} "
+  loop:
+    - "Resource_Monitor@Ory0n"
+    - "tidal-wm "
+ 
+
+
+- name: Set Gnome Apperance for user - jlumley
+  become: yes
+  become_user: "jlumley"
+  command: 
+    cmd: " {{item}} "
+  loop:
+    - "gsettings set org.gnome.desktop.interface gtk-theme 'Sweet'"
+    - "gsettings set org.gnome.desktop.wm.preferences theme 'Sweet'"
+    - "gsettings set org.gnome.desktop.interface icon-theme 'Candy'"
+
+# Restart GNOME again to apply all changes
+
+- name: Restart GNOME Shell
+  command: 
+    cmd: "killall -3 gnome-shell"
+
+
+
+

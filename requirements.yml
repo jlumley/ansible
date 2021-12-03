@@ -12,5 +12,7 @@ roles:
     version: 4.1.1
 
 collections:
+  - name: kewlfft.aur
+    version: 0.10.0
   - name: community.crypto
     version: 1.9.5

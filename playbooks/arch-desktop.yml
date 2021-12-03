@@ -1,0 +1,15 @@
+---
+- name: Setup jeremy-arch-desktop
+  hosts: jeremy-arch-desktop.jlumley.local
+  gather_facts: true
+
+  roles:
+    - name: Install Packages for Arch
+      role: arch_packages
+    
+    - name: Install Arch Desktop Apps
+      role: desktop_apps
+
+    - name: Set GNOME Custom Apperance
+      role: desktop_appearance
+
