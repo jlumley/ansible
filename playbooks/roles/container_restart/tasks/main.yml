@@ -1,0 +1,17 @@
+---
+
+
+- name: Adding script for restarting unhealthy containers
+  template:
+    owner: "admin"
+    src: container_restart.j2
+    dest: "/srv/mgmt/restart_containers"
+    mode: 0700
+
+- name: Add Cron to restart unhealthy containers
+  cron: 
+    user: "admin"
+    name: "Restart Unhealthy Containers"
+    job: "/srv/mgmt/restart_containers"
+    minute: "*/5"
+

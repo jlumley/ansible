@@ -1,6 +1,6 @@
 ---
-- name: Setup jlumley-r710-01.jlumley.local
-  hosts: jlumley-r710-01.jlumley.local
+- name: Setup r710-01.jlumley.local
+  hosts: r710-01.jlumley.local
   gather_facts: true
 
   vars_prompt:

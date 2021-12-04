@@ -1,6 +1,6 @@
 ---
 - name: Set up Docker Containers for local infrastructure
-  hosts: jlumley-r710-01.jlumley.local
+  hosts: r710-01.jlumley.local
 
   vars_prompt:
     - name: update_containers
@@ -14,11 +14,7 @@
       private: no
 
   roles:
-    - name: Install dependencies
-      role: common
-
-    - name: Deploy Infrastructure Docker containers
-      role: infrastructure_containers
-
-    - name: Deploy Media Docker containers
-      role: media_containers
+    - common
+    - infrastructure_containers
+    - media_containers
+    - container_restart

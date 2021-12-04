@@ -1,0 +1,11 @@
+#!/bin/bash
+# Script managed by ansible
+#
+# This Script simply restarts all unhealthy containers
+# that's it, that's all
+#
+
+docker restart $(docker ps | grep "unhealthy" | cut -d " " -f 1)
+
+      
+      

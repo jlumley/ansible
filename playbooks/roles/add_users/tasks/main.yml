@@ -18,6 +18,7 @@
   ansible.builtin.user:
     name: admin
     group: admin
+    groups: docker
     uid: 2020
     shell: /bin/bash
 

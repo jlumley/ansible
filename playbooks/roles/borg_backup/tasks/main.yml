@@ -136,8 +136,10 @@
   cron:
     user: admin
     special_time: hourly
-    job: /srv/mgmt/borg_backup_{{ item }}.sh
+    name: "back up {{item}}"
+    job: "/srv/mgmt/borg_backup_{{ item }}.sh"
   loop:
     - jlumley-media
     - jlumley-infrastructure
     - jlumley-frigate
+
