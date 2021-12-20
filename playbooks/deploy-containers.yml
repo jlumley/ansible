@@ -6,12 +6,27 @@
     - name: update_containers
       prompt: "Pull new docker images? (yes/no)"
       private: no
-    - name: pia_password
-      prompt: "PIA Password"
-      private: no
-    - name: plex_claim
-      prompt: "Plex Claim"
-      private: no
+    - name: keepass_pw
+      prompt: "Enter KeePass Password"
+
+  pre_tasks:
+    - name: "PIA Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "private_internet_access"
+      register: "pia_secrets"
+      delegate_to: "jeremy-arch-desktop.jlumley.local"
+
+    - name: "Plex Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "plex"
+      register: "plex_secrets"
+      delegate_to: "jeremy-arch-desktop.jlumley.local"
+
+
 
   roles:
     - common

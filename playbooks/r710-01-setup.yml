@@ -4,15 +4,23 @@
   gather_facts: true
 
   vars_prompt:
-    - name: borgbase_media_repo_key
-      prompt: Enter BorgBase.com Media Repo Key
-    - name: borgbase_infrastructure_repo_key
-      prompt: Enter BorgBase.com Infrastructure Repo Key
-    - name: borgbase_frigate_repo_key
-      prompt: Enter BorgBase.com Frigate Repo Key
-    - name: borgbase_api_token
-      prompt: Enter BorgBase.com API Token
+    - name: keepass_pw
+      prompt: Enter Password for KeePass Database 
 
+  # Fetch Secrets from KeePassXC 
+  pre_tasks:
+    - name: BorgBase.com
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "borg_base"
+      register: borg_base_secrets
+      delegate_to: jeremy-arch-desktop.jlumley.local
+
+    - name: foo
+      debug:
+        msg: "secrets: {{borg_base_secrets}}" 
+  
   roles:
     - name: Install Common Development Tools
       role: common

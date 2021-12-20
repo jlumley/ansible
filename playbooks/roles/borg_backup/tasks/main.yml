@@ -29,7 +29,7 @@
     body: '{ "query": "{ sshList {id}}" }'
     headers:
       Content-Type: application/json
-      Authorization: "Bearer {{ borgbase_api_token }}"
+      Authorization: "Bearer {{ borg_base_secrets.custom_fields.api_token }}"
   register: bb_ssh_list
 
 - name: Get repo ids from BorgBase.com
@@ -40,7 +40,7 @@
     body: '{ "query": "{ repoList {id}}" }'
     headers:
       Content-Type: application/json
-      Authorization: "Bearer {{ borgbase_api_token }}"
+      Authorization: "Bearer {{ borg_base_secrets.custom_fields.api_token }}"
   register: bb_repo_list
 
 - name: Add New SSH key ot BorgBase.com
@@ -51,7 +51,7 @@
     body: '{ "query": "mutation {sshAdd(name: \"{{ inventory_hostname_short }}\" keyData: \"{{ bb_ssh_keygen.public_key }}\" ) {keyAdded {id }} }" }'
     headers:
       Content-Type: application/json
-      Authorization: "Bearer {{ borgbase_api_token }}"
+      Authorization: "Bearer {{ borg_base_secrets.custom_fields.api_token }}"
   register: bb_new_key
 
 - name: Add New SSH key to repos
@@ -62,7 +62,7 @@
     body: '{ "query": "mutation { repoEdit(id: \"{{ item.id }}\" fullAccessKeys: [\"{{ bb_new_key.json.data.sshAdd.keyAdded.id }}\"] ) { repoEdited {id}} }" }'
     headers:
       Content-Type: application/json
-      Authorization: "Bearer {{ borgbase_api_token }}"
+      Authorization: "Bearer {{ borg_base_secrets.custom_fields.api_token }}"
   with_items:
     - "{{ bb_repo_list.json.data.repoList }}"
 
@@ -74,7 +74,7 @@
     body: '{ "query": "mutation {sshDelete(id: {{item.id}} ) {ok}} " }'
     headers:
       Content-Type: application/json
-      Authorization: "Bearer {{ borgbase_api_token }}"
+      Authorization: "Bearer {{ borg_base_secrets.custom_fields.api_token }}"
   with_items:
     - "{{ bb_ssh_list.json.data.sshList }}"
 
@@ -87,9 +87,9 @@
     mode: 0700
   loop:
     - {
-        borgbase_repo: fs08gr7x@fs08gr7x.repo.borgbase.com:repo,
+        borgbase_repo: "{{borg_base_secrets.custom_fields.media_repo}}",
         backup_paths: /srv/config/sonarr/Backups/ /srv/config/radarr/Backups/ /srv/config/lidarr/Backups/ /srv/config/prowlarr/Backups/ /srv/config/qbittorrent/ /srv/config/plex/,
-        repo_key: "{{ borgbase_media_repo_key }}",
+        repo_key: "{{borg_base_secrets.custom_fields.media_repo_key}}",
         name: jlumley-media,
         keep_hourly: 2,
         keep_daily: 2,
@@ -97,9 +97,9 @@
         keep_monthly: 1,
       }
     - {
-        borgbase_repo: htkie3uk@htkie3uk.repo.borgbase.com:repo,
+        borgbase_repo: "{{borg_base_secrets.custom_fields.infrastructure_repo}}",
         backup_paths: /srv/config/home-assistant/ /srv/config/frigate/ /srv/config/mosquitto/config/ /srv/config/nginx/ /srv/config/unifi/data/backup/ /srv/config/dashboard/,
-        repo_key: "{{ borgbase_infrastructure_repo_key }}",
+        repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
         name: jlumley-infrastructure,
         keep_hourly: 2,
         keep_daily: 2,
@@ -107,9 +107,9 @@
         keep_monthly: 1,
       }
     - {
-        borgbase_repo: awg968od@awg968od.repo.borgbase.com:repo,
+        borgbase_repo: "{{borg_base_secrets.custom_fields.frigate_repo}}",
         backup_paths: /data/frigate/clips,
-        repo_key: "{{ borgbase_frigate_repo_key }}",
+        repo_key: "{{borg_base_secrets.custom_fields.frigate_repo_key}}",
         name: jlumley-frigate,
         keep_hourly: 1,
         keep_daily: 2,

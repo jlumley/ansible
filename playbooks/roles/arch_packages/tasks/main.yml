@@ -29,8 +29,16 @@
     - "man"
     - "neofetch"
     - "netcat"
+    - "python-pip"
     - "python3"
     - "vim"
+
+- name: Install pip dependencies
+  pip: 
+    name: "{{item}}"
+    state: latest
+  loop:
+    - "pykeepass"
 
 - name: Add Vim global vimrc
   template:
@@ -54,13 +62,13 @@
   git:
     repo: "{{item.repo}}"
     dest: "/tmp/{{item.name}}"
-    version: "{{item.branch}}"
+    version: "{{item.version}}"
     clone: yes
     force: yes
   loop: 
     - name: "xclip"
       repo: "https://github.com/astrand/xclip.git"
-      branch: "master"
+      version: "master"
 
 - name: Install xclip
   command:

@@ -18,8 +18,8 @@
       - "{{ dns_server }}"
     env:
       LOC: "ca_ontario"
-      USER: "p1142923"
-      PASS: "{{ pia_password }}"
+      USER: "{{pia_secrets.username}}"
+      PASS: "{{pia_secrets.password}}"
       LOCAL_NETWORK: "192.168.67.0/24"
       KEEP_ALIVE: "25"
       VPNDNS: "1.1.1.1,9.9.9.9"
@@ -74,7 +74,7 @@
       PUID: "2001"
       PGID: "2001"
       VERIOSN: "plexpass"
-      PLEX_CLAIM: "{{ plex_claim }}"
+      PLEX_CLAIM: "{{plex_secrets.custom_fields.plex_claim}}"
     mounts:
       - source: "/srv/config/plex"
         target: "/config"
