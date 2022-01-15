@@ -19,7 +19,7 @@
       role: macbook_arch
       when: is_macbook == "y" 
 
-        # - name: Set GNOME Custom Apperance
-        #role: desktop_appearance
+    - name: Set GNOME Custom Apperance
+      role: desktop_appearance
 
 

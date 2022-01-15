@@ -35,6 +35,7 @@
     - "python3"
     - "vim"
     - "code"
+    - "keepassxc"
 
 - name: Install pip dependencies
   pip: 

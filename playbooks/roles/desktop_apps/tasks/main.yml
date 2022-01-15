@@ -7,22 +7,18 @@
   become: yes
   become_user: pkg-builder
 
-- name: Install 1Password
-  become: yes
-  become_user: pkg-builder
-  kewlfft.aur.aur:
-    name: "1password"
-
 ### Installing Spotify
 - name: Add gpg key for Spotify
   shell: "curl -sS https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | gpg --import -"
   become: yes
   become_user: pkg-builder
 
-- name: Install Spotiy
+- name: Installing Applications
   become: yes
   become_user: pkg-builder
   kewlfft.aur.aur:
-    name: "spotify"
-
+    name: "{{item}}"
+  loop:
+    - "1password"
+    - "spotify"
 
