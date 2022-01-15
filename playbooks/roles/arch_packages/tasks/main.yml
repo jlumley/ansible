@@ -24,6 +24,7 @@
   loop:
     - "alacritty"
     - "curl"
+    - "docker"
     - "firefox"
     - "git"
     - "man"
@@ -32,6 +33,7 @@
     - "python-pip"
     - "python3"
     - "vim"
+    - "code"
 
 - name: Install pip dependencies
   pip: 
@@ -81,5 +83,12 @@
     - "make install"
     - "make install.man"
 
+- name: enable systemd services
+  systemd:
+    name: "{{item}}"
+    enabled: true
+    state: started
+  loop:
+    - "docker"
 
 

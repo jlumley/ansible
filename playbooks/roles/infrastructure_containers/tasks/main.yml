@@ -5,6 +5,7 @@
 # - mosquitto
 # - home-assistant
 # - frigate
+# - budgetzero
 
 - name: Deploy Unifi Controller
   docker_container:
@@ -110,7 +111,7 @@
     restart_policy: "always"
     network_mode: host
     dns_servers:
-      - "{{ dns_server }}"
+      - "{{dns_server}}"
     env:
       TZ: "America/Toronto"
       PUID: "2009"
@@ -124,13 +125,15 @@
   docker_container:
     name: dashboard
     image: rmountjoy/dashmachine
-    pull: "{{ update_containers }}"
+    pull: "{{update_containers}}"
     restart_policy: "always"
     dns_servers:
-      - "{{ dns_server }}"
+      - "{{dns_server}}"
     mounts:
       - source: "/srv/config/dashboard"
         target: "/dashmachine/dashmachine/user_data"
         type: bind
     published_ports:
       - 5005:5000
+
+
