@@ -1,0 +1,13 @@
+---
+### Installing macbook fan controller
+- name: Install mbpfan-git
+  become: yes
+  become_user: pkg-builder
+  kewlfft.aur.aur:
+    name: "mbpfan-git"
+
+
+- name: enable mbpfan-git
+  systemd:
+    enabled: yes
+    name: "mbpfan.service"

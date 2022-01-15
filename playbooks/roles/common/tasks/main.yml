@@ -7,11 +7,12 @@
     - "bash-completion"
     - "curl"
     - "git"
+    - "htop"
     - "vim"
     - "netcat"
     - "borgbackup"
     - "python3"
-      #- "python3-pip"
+    - "python-pip"
 
 - name: Add Vim global vimrc
   template:

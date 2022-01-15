@@ -2,6 +2,11 @@
 - name: Setup Arch Linux
   hosts: localhost
   gather_facts: true
+  
+  vars_prompt:
+    - name: is_macbook
+      prompt: is this a macbook? [y/N] 
+      private: no
 
   roles:
     - name: Install Packages for Arch
@@ -10,6 +15,11 @@
     - name: Install Arch Desktop Apps
       role: desktop_apps
 
-    - name: Set GNOME Custom Apperance
-      role: desktop_appearance
+    - name: Install Requirements for Macbooks
+      role: macbook_arch
+      when: is_macbook == "y" 
+
+        # - name: Set GNOME Custom Apperance
+        #role: desktop_appearance
+
 

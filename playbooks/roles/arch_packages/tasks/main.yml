@@ -27,6 +27,7 @@
     - "docker"
     - "firefox"
     - "git"
+    - "htop"
     - "man"
     - "neofetch"
     - "netcat"
