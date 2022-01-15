@@ -15,7 +15,7 @@
 
 ### Installing Spotify
 - name: Add gpg key for Spotify
-  shell: "curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | gpg --import"
+  shell: "curl -sS https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | gpg --import -"
   become: yes
   become_user: pkg-builder
 

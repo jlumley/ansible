@@ -1,6 +1,6 @@
 ---
-- name: Setup jeremy-arch-desktop
-  hosts: jeremy-arch-desktop.jlumley.local
+- name: Setup Arch Linux
+  hosts: localhost
   gather_facts: true
 
   roles:
