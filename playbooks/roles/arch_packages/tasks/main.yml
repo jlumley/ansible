@@ -93,4 +93,15 @@
   loop:
     - "docker"
 
+- name: remove gnome bloat
+  package:
+    state: "absent"
+    name: "{{item}}"
+  loop:
+    - "gnome-contacts"
+    - "gnome-music"
+    - "gnome-photos"
+    - "gnome-books"
+    - "gnome-maps"
+    - "gnome-calendar"
 
