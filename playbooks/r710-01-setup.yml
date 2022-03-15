@@ -15,18 +15,13 @@
         password: "{{keepass_pw}}"
         entry: "borg_base"
       register: borg_base_secrets
-      delegate_to: jeremy-arch-desktop.jlumley.local
+      delegate_to: localhost
+      connection: local
 
-    - name: foo
-      debug:
-        msg: "secrets: {{borg_base_secrets}}" 
   
   roles:
     - name: Install Common Development Tools
       role: common
-
-    - name: Install speedtest-cli
-      role: darkwizard242.speedtest
 
     - name: Add users
       role: add_users

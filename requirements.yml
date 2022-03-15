@@ -1,7 +1,5 @@
 ---
 roles:
-  - name: darkwizard242.speedtest
-    version: 2.0.0
   - name: kyl191.openvpn
     version: v0.9.1
   - name: m3nu.ansible_role_borgbackup
@@ -11,8 +9,8 @@ roles:
   - name: geerlingguy.docker
     version: 4.1.1
 
+
 collections:
   - name: kewlfft.aur
-    version: 0.10.0
   - name: community.crypto
     version: 1.9.5

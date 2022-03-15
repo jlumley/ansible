@@ -1,0 +1,20 @@
+# managed by ansible
+
+# Let new devices join our zigbee network
+permit_join: true
+homeassistant: true
+
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost
+  username: {{ mqtt_secrets.username }}
+  password: {{ mqtt_secrets.password }}
+# Zigbee Adapter path
+serial:
+  port: /dev/ttyUSB0
+# Enable the Zigbee2MQTT frontend
+frontend:
+  port: 8085
+# Let Zigbee2MQTT generate a new network key on first start
+advanced:
+  network_key: GENERATE

@@ -91,6 +91,9 @@
       - source: "/data/plex-media/demos"
         target: "/demos"
         type: bind
+      - source: "/data/plex-media/home-videos"
+        target: "/home-videos"
+        type: bind
 
 - name: Deploy Tautulli
   docker_container:

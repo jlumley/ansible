@@ -1,0 +1,123 @@
+mqtt:
+  # Required: host name
+  host: localhost
+  # Optional: port (default: shown below)
+  port: 1883
+  # Optional: topic prefix (default: shown below)
+  # WARNING: must be unique if you are running multiple instances
+  topic_prefix: frigate
+  # Optional: client id (default: shown below)
+  # WARNING: must be unique if you are running multiple instances
+  client_id: frigate
+  user: {{ mqtt_secrets.username }}
+  password: {{ mqtt_secrets.password }}
+  stats_interval: 60
+
+cameras:
+  living_room_frigate:
+    ffmpeg:
+      inputs:
+        - path: rtsp://{{ amcrest_secrets.username }}:{{ amcrest_secrets.password }}@192.168.69.17:554/cam/realmonitor?channel=1&subtype=0
+          roles:
+            - detect
+            - record
+            - rtmp
+    detect:
+        width: 640
+        height: 480
+        fps: 5
+    snapshots:
+      enabled: True
+      timestamp: False
+      bounding_box: True
+      retain:
+        default: 14
+
+    record:
+      # Required: enables clips for the camera (default: shown below)
+      # This value can be set via MQTT and will be updated in startup based on retained value
+      enabled: True
+      retain_days: 1
+      events:
+          # Optional: Number of seconds before the event to include in the clips (default: shown below)
+          pre_capture: 5
+          # Optional: Number of seconds after the event to include in the clips (default: shown below)
+          post_capture: 5
+          # Optional: Objects to save clips for. (default: all tracked objects)
+          objects:
+            - person
+          # Optional: Restrict clips to objects that entered any of the listed zones (default: no required zones)
+          required_zones: []
+          retain:
+              default: 14
+
+    objects:
+      track:
+        - person
+        - cat
+      filters:
+        person:
+          min_score: 0.69
+        cat:
+          min_score: 0.69
+
+  front_door_frigate:
+    ffmpeg:
+      inputs:
+        - path: rtsp://{{ amcrest_secrets.username }}:{{ amcrest_secrets.password }}@192.168.69.22:554/cam/realmonitor?channel=1&subtype=0
+          roles:
+            - detect
+            - rtmp
+            - record
+    best_image_timeout: 120
+    detect:
+        width: 1920
+        height: 1080
+        fps: 5
+    snapshots:
+      enabled: True
+      timestamp: False
+      bounding_box: True
+      required_zones:
+        - driveway
+      retain:
+        default: 14
+
+    record:
+      # Required: enables clips for the camera (default: shown below)
+      # This value can be set via MQTT and will be updated in startup based on retained value
+      enabled: True
+      events:
+          # Optional: Number of seconds before the event to include in the clips (default: shown below)
+          pre_capture: 10
+          # Optional: Number of seconds after the event to include in the clips (default: shown below)
+          post_capture: 10
+          # Optional: Objects to save clips for. (default: all tracked objects)
+          objects:
+            - person
+          # Optional: Restrict clips to objects that entered any of the listed zones (default: no required zones)
+          required_zones:
+            - driveway
+          retain:
+              default: 30
+      # Required: Default retention days (default: shown below)
+      retain_days: 1
+
+    zones:
+        driveway:
+          coordinates: 2162,1920,2238,1597,2313,1043,2121,1006,1877,1023,1690,1008,1328,1021,742,1001,815,1920
+
+    objects:
+      track:
+        - person
+
+      filters:
+        person:
+          min_area: 500000
+          min_score: 0.69
+
+
+detectors:
+  coral1:
+    type: edgetpu
+    device: pci:0

@@ -98,7 +98,7 @@
       }
     - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.infrastructure_repo}}",
-        backup_paths: /srv/config/home-assistant/ /srv/config/frigate/ /srv/config/mosquitto/config/ /srv/config/nginx/ /srv/config/unifi/data/backup/ /srv/config/dashboard/,
+        backup_paths: /srv/config/home-assistant/ /srv/config/mosquitto/config/ /srv/config/nginx/ /srv/config/unifi/data/backup/ /srv/config/dashboard/,
         repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
         name: jlumley-infrastructure,
         keep_hourly: 2,

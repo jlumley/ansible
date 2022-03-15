@@ -4,7 +4,6 @@
     name: "{{ item }}"
     state: latest
   loop:
-    - "bash-completion"
     - "curl"
     - "git"
     - "htop"
@@ -12,7 +11,7 @@
     - "netcat"
     - "borgbackup"
     - "python3"
-    - "python-pip"
+    - "python3-pip"
 
 - name: Add Vim global vimrc
   template:

@@ -16,7 +16,7 @@
         password: "{{keepass_pw}}"
         entry: "private_internet_access"
       register: "pia_secrets"
-      delegate_to: "jeremy-arch-desktop.jlumley.local"
+      delegate_to: "localhost"
 
     - name: "Plex Secrets"
       keepassxc:
@@ -24,7 +24,31 @@
         password: "{{keepass_pw}}"
         entry: "plex"
       register: "plex_secrets"
-      delegate_to: "jeremy-arch-desktop.jlumley.local"
+      delegate_to: "localhost"
+
+    - name: "Cloudflare Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "cloudflare"
+      register: "cloudflare_secrets"
+      delegate_to: "localhost"
+
+    - name: "MQTT Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "mqtt"
+      register: "mqtt_secrets"
+      delegate_to: "localhost"
+    
+    - name: "Amcrest Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "amcrest"
+      register: "amcrest_secrets"
+      delegate_to: "localhost"
 
 
 

@@ -99,3 +99,30 @@
     group: frigate
     uid: 2022
     shell: /bin/bash
+
+- name: Create esphome group on host
+  ansible.builtin.group:
+    name: esphome
+    gid: 2023
+    state: present
+
+- name: Create esphome user on host
+  ansible.builtin.user:
+    name: esphome
+    group: esphome
+    uid: 2023
+    shell: /bin/bash
+
+- name: Create zigbee2mqtt group on host
+  ansible.builtin.group:
+    name: zigbee2mqtt
+    gid: 2024
+    state: present
+
+- name: Create zigbee2mqtt user on host
+  ansible.builtin.user:
+    name: zigbee2mqtt
+    group: zigbee2mqtt
+    uid: 2024
+    shell: /bin/bash
+

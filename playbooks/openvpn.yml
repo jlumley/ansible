@@ -7,9 +7,6 @@
     - name: Install Common Development Tools
       role: common
 
-    - name: Install speedtest-cli
-      role: darkwizard242.speedtest
-
     - name: Install OpenVPN
       role: kyl191.openvpn
       openvpn_port: 443
