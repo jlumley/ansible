@@ -10,26 +10,36 @@
 - name: Create config dirs
   file:
     owner: "{{ item.path_owner }}"
+    group: "{{ item.path_group }}"
     state: "directory"
     path: "/srv/config/{{item.path}}"
   loop:
     - path_owner: "2010"
+      path_group: "2010"
       path: "unifi"
     - path_owner: "2006"
+      path_group: "2006"
       path: "nginx/conf"
     - path_owner: "1883"
+      path_group: "1883"
       path: "mosquitto"
     - path_owner: "2022"
+      path_group: "2022"
       path: "frigate"
     - path_owner: "2009"
+      path_group: "2009"
       path: "home-assistant"
     - path_owner: "1000"
+      path_group: "1000"
       path: "dashboard"
     - path_owner: "1000"
+      path_group: "1000"
       path: "hyperion"
     - path_owner: "2023"
+      path_group: "2023"
       path: "esphome"
-    - path_owner: "2024"
+    - path_owner: "1000"
+      path_group: "1000"
       path: "zigbee2mqtt"
 
 - name: Deploy Unifi Controller
@@ -205,10 +215,10 @@
         read_only: yes  
   
 
-- name: Create Zigbee2mqtt config
-  template:
-    src: "zigbee2mqtt_conf.j2" 
-    dest: "/srv/config/zigbee2mqtt/configuration.yaml"
+#- name: Create Zigbee2mqtt config
+#  template:
+#    src: "zigbee2mqtt_conf.j2" 
+#    dest: "/srv/config/zigbee2mqtt/configuration.yaml"
 
 - name: Deploy Zigbee2MQTT
   docker_container:
@@ -228,8 +238,6 @@
     network_mode: host
     env:
       TZ: "America/Toronto"
-      PUID: "2024"
-      PGID: "2024"
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
 

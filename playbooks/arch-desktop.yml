@@ -8,10 +8,7 @@
       prompt: is this a macbook? [y/N] 
       private: no
       default: "n"
-    - name: update_apperance
-      prompt: update apperance? [y/N] 
-      private: no
-      default: "n"
+
 
   roles:
     - name: Install Packages for Arch
@@ -24,8 +21,6 @@
       role: macbook_arch
       when: is_macbook == "y" 
 
-    - name: Set GNOME Custom Apperance
-      role: desktop_appearance
-      when: update_apperance == "y"
+
 
 

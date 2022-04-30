@@ -49,6 +49,15 @@
         entry: "amcrest"
       register: "amcrest_secrets"
       delegate_to: "localhost"
+    
+    - name: "Zigbee2MQTT Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "zigbee2mqtt"
+      register: "zigbee2mqtt_secrets"
+      delegate_to: "localhost"
+
 
 
 
