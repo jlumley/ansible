@@ -185,6 +185,7 @@
   docker_container:
     name: hyperion
     image: sirfragalot/hyperion.ng:latest
+    pull: "{{update_containers}}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -201,6 +202,7 @@
   docker_container:
     name: esphome
     image: esphome/esphome
+    pull: "{{update_containers}}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -224,6 +226,7 @@
   docker_container:
     name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
+    pull: "{{update_containers}}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -241,5 +244,18 @@
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
 
+
+- name: Deploy Logseq
+  docker_container:
+    name: logseq
+    image: ghcr.io/logseq/logseq-webapp:latest
+    pull: "{{update_containers}}"
+    restart_policy: "always"
+    dns_servers:
+      - "{{dns_server}}"
+    published_ports: 
+      - 3001:80
+    env:
+      TZ: "America/Toronto"
 
 
