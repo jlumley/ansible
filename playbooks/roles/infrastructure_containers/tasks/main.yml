@@ -19,7 +19,7 @@
       path: "unifi"
     - path_owner: "2006"
       path_group: "2006"
-      path: "nginx/conf"
+      path: "nginx/proxy-confs"
     - path_owner: "1883"
       path_group: "1883"
       path: "mosquitto"
@@ -71,6 +71,13 @@
     src: "cloudflare_credentials.j2" 
     dest: "/secrets/cloudflare.ini"
 
+- name: Create Nginx Proxy confs files
+  template:
+    src: "{{ item }}"
+    dest: /srv/config/nginx/proxy-confs/{{ item | basename }}
+  with_fileglob:
+    - ../templates/nginx/proxy-confs/*
+  
 - name: Deploy Niginx
   docker_container:
     name: nginx
@@ -87,8 +94,8 @@
       VALIDATION: dns
       DNSPLUGIN: cloudflare
     mounts:
-      - source: "/srv/config/nginx/conf"
-        target: "/config"
+      - source: "/srv/config/nginx/proxy-confs"
+        target: "/config/nginx/proxy-confs/"
         type: bind
       - source: "/secrets/cloudflare.ini"
         target: "/config/dns-conf/cloudflare.ini"
