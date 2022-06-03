@@ -113,16 +113,17 @@
     uid: 2023
     shell: /bin/bash
 
-- name: Create zigbee2mqtt group on host
+- name: Create Bookstack group on host
   ansible.builtin.group:
-    name: zigbee2mqtt
+    name: bookstack
     gid: 2024
     state: present
 
-- name: Create zigbee2mqtt user on host
+- name: Create Bookstack user on host
   ansible.builtin.user:
-    name: zigbee2mqtt
-    group: zigbee2mqtt
+    name: bookstack
+    group: bookstack
     uid: 2024
     shell: /bin/bash
+    state: present
 

@@ -5,7 +5,9 @@
 # - mosquitto
 # - home-assistant
 # - frigate
-# - budgetzero
+# - esphome
+# - zigbee2mqtt
+# - logseq
 
 - name: Create config dirs
   file:
@@ -41,6 +43,13 @@
     - path_owner: "1000"
       path_group: "1000"
       path: "zigbee2mqtt"
+    - path_owner: "2024"
+      path_group: "2024"
+      path: "bookstack/config"
+    - path_owner: "2024"
+      path_group: "2024"
+      path: "bookstack/db"
+
 
 - name: Deploy Unifi Controller
   docker_container:
@@ -84,6 +93,7 @@
     image: ghcr.io/linuxserver/swag
     pull: "{{ update_containers }}"
     restart_policy: "always"
+    restart: yes
     dns_servers:
       - "{{ dns_server }}"
     env:
@@ -251,18 +261,53 @@
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
 
+- name: Create Bookstack Network
+  docker_network:
+    name: bookstack_network
 
-- name: Deploy Logseq
+- name: Deploy Bookstack MYSQL DB
   docker_container:
-    name: logseq
-    image: ghcr.io/logseq/logseq-webapp:latest
+    name: bookstack_db
+    image: mysql
     pull: "{{update_containers}}"
     restart_policy: "always"
-    dns_servers:
-      - "{{dns_server}}"
-    published_ports: 
-      - 3001:80
+    networks:
+      - name: bookstack_network
+    mounts:
+      - source: "/srv/config/bookstack/db"
+        target: "/config"
+        type: bind  
     env:
       TZ: "America/Toronto"
+      PUID: "2024"
+      PGID: "2024"
+      MYSQL_ROOT_PASSWORD: "{{bookstack_secrets.custom_fields.db_root_password}}"
+      MYSQL_DATABASE: bookstackapp
+      MYSQL_USER: "{{bookstack_secrets.custom_fields.db_user}}"
+      MYSQL_PASSWORD: "{{bookstack_secrets.custom_fields.db_password}}"
+
+- name: Deploy Bookstack
+  docker_container:
+    name: bookstack
+    image: lscr.io/linuxserver/bookstack
+    pull: "{{update_containers}}"
+    restart_policy: "always"
+    networks:
+      - name: bookstack_network
+    published_ports:
+      - 19080:80
+    mounts:
+      - source: "/srv/config/bookstack/config"
+        target: "/config"
+        type: bind
+    env:
+      TZ: "America/Toronto"
+      PUID: "2024"
+      PGID: "2024"
+      APP_URL: "https://wiki.local.jlumley.com/"
+      DB_HOST: "bookstack_db"
+      DB_DATABASE: "bookstackapp"
+      DB_USER: "{{bookstack_secrets.custom_fields.db_user}}"
+      DB_PASS: "{{bookstack_secrets.custom_fields.db_password}}"
 
 

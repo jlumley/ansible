@@ -57,9 +57,14 @@
         entry: "zigbee2mqtt"
       register: "zigbee2mqtt_secrets"
       delegate_to: "localhost"
-
-
-
+    
+    - name: "Bookstack Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "bookstack"
+      register: "bookstack_secrets"
+      delegate_to: "localhost"
 
   roles:
     - common
