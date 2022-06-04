@@ -88,7 +88,7 @@
   loop:
     - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.media_repo}}",
-        backup_paths: /srv/config/sonarr/Backups/ /srv/config/radarr/Backups/ /srv/config/lidarr/Backups/ /srv/config/prowlarr/Backups/ /srv/config/qbittorrent/ /srv/config/plex/,
+        backup_paths: /srv/config/sonarr/Backups/ /srv/config/radarr/Backups/ /srv/config/prowlarr/Backups/ /srv/config/qbittorrent/ /srv/config/plex/,
         repo_key: "{{borg_base_secrets.custom_fields.media_repo_key}}",
         name: jlumley-media,
         keep_hourly: 2,
@@ -98,7 +98,7 @@
       }
     - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.infrastructure_repo}}",
-        backup_paths: /srv/config/home-assistant/ /srv/config/mosquitto/config/ /srv/config/nginx/ /srv/config/unifi/data/backup/ /srv/config/dashboard/,
+        backup_paths: /srv/config/home-assistant/ /srv/config/mosquitto/config/ /srv/config/unifi/data/backup/ /srv/config/dashboard/ /srv/config/bookstack/,
         repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
         name: jlumley-infrastructure,
         keep_hourly: 2,
