@@ -1,0 +1,177 @@
+[Settings]
+theme = light
+accent = blue
+roles = admin,user,public_user
+home_access_groups = admin_only, public
+settings_access_groups = admin_only
+custom_app_title = Lumley Home
+sidebar_default = open
+
+[public]
+roles = admin, user, public_user
+
+[plex_status]
+platform = http_status
+resource = https://app.plex.tv
+return_codes = 2xx,3xx
+
+[Plex]
+prefix = https://
+url = app.plex.tv/
+icon = static/images/apps/plex.png
+sidebar_icon = static/images/apps/plex.png
+description = Plex Streaming service
+data_sources = plex_status
+tags = Media
+groups = public
+
+[sonarr_status]
+platform = http_status
+resource = https://sonarr.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Sonarr]
+prefix = https://
+url = sonarr.local.jlumley.com
+icon = static/images/apps/sonarr.png
+sidebar_icon = static/images/apps/sonarr.png
+description = Smart PVR for bittorrent users
+data_sources = sonarr_status
+tags = Media
+groups = public
+
+[radarr_status]
+platform = http_status
+resource = https://radarr.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Radarr]
+prefix = https://
+url = radarr.local.jlumley.com
+icon = static/images/apps/radarr.png
+sidebar_icon = static/images/apps/radarr.png
+description = A fork of Sonarr to work with movies à la Couchpotato
+data_sources = radarr_status
+tags = Media
+groups = public
+
+[prowlarr_status]
+platform = http_status
+resource = https://prowlarr.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Prowlarr]
+prefix = https://
+url = prowlarr.local.jlumley.com
+icon = static/images/icons/prowlarr-logo.png
+sidebar_icon = static/images/icons/prowlarr-logo.png
+description = API Support for your favourite torrent trackers
+data_sources = prowlarr_status
+tags = Media
+groups = public
+
+[tautulli_status]
+platform = http_status
+resource = https://tautulli.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Tautulli]
+prefix = https://
+url = tautulli.local.jlumley.com
+icon = static/images/apps/tautulli.png
+sidebar_icon = static/images/apps/tautulli.png
+description = A Python based monitoring and tracking tool for Plex Media Server
+data_sources = tautulli_status
+tags = Media
+groups = public
+
+[qbittorrent_status]
+platform = http_status
+resource = https://qbittorrent.local.jlumley.com
+return_codes = 2xx,3xx
+
+[qBittorrent]
+prefix = https://
+url = qbittorrent.local.jlumley.com
+icon = static/images/apps/qbittorrent.png
+sidebar_icon = static/images/apps/qbittorrent.png
+description = A BitTorrent client in Qt
+data_sources = qbittorrent_status
+tags = Media
+groups = public
+
+[homeassistant_status]
+platform = http_status
+resource = https://homeassistant.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Home Assistant]
+prefix = https://
+url = homeassistant.local.jlumley.com
+icon = static/images/apps/home-assistant.png
+sidebar_icon = static/images/apps/home-assistant.png
+description = Open source home automation that puts local control and privacy first
+data_sources = homeassistant_status
+tags = Infrastructure
+groups = public
+
+[frigate_status]
+platform = http_status
+resource = https://frigate.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Frigate]
+prefix = https://
+url = frigate.local.jlumley.com
+icon = static/images/icons/frigate-logo.svg
+sidebar_icon = static/images/icons/frigate-logo.svg
+description = A complete and local NVR designed for Home Assistant with AI object detection
+data_sources = frigate_status
+tags = Infrastructure
+groups = public
+
+[bookstack_status]
+platform = http_status
+resource = https://wiki.local.jlumley.com
+return_codes = 2xx,3xx
+
+[BookStack]
+prefix = https://
+url = wiki.local.jlumley.com
+icon = static/images/apps/bookstack.png
+sidebar_icon = static/images/apps/bookstack.png
+description = BookStack is a simple, self-hosted, easy-to-use platform for organising and storing information
+data_sources = bookstack_status
+tags = Infrastructure
+groups = public
+
+[pfsense_status]
+platform = http_status
+resource = http://192.168.67.1
+return_codes = 2xx,3xx
+
+[pfSense]
+prefix = http://
+url = 192.168.67.1
+icon = static/images/apps/pfsense.png
+sidebar_icon = static/images/apps/pfsense.png
+description = pfSense is a free and open source firewall and router that also features unified threat management, load balancing, multi WAN, and more.
+data_sources = pfsense_status
+tags = Infrastructure
+groups = public
+
+[unifi_status]
+platform = http_status
+resource = https://unifi.local.jlumley.com
+return_codes = 2xx,3xx
+
+[Unifi]
+prefix = https://
+url = unifi.local.jlumley.com
+icon = static/images/apps/unifi.png
+sidebar_icon = static/images/apps/unifi.png
+description = The UniFi® Controller is a wireless network management software solution from Ubiquiti Networks™. It allows you to manage multiple wireless networks using a web browser.
+data_sources = unifi_status
+tags = Infrastructure
+groups = public
+

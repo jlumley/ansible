@@ -33,7 +33,7 @@
       path: "home-assistant"
     - path_owner: "1000"
       path_group: "1000"
-      path: "dashboard"
+      path: "dashboard/icons"
     - path_owner: "1000"
       path_group: "1000"
       path: "hyperion"
@@ -183,17 +183,32 @@
         target: "/config"
         type: bind
 
-- name: Deploy Dash Machine
+- name: Create Dashmachine config
+  template:
+    src: "dashboard/dashboard_conf.j2" 
+    dest: "/srv/config/dashboard/config.ini"
+
+- name: Create Dashmachine icons
+  copy:
+    src: "{{ item }}"
+    dest: /srv/config/dashboard/icons/{{ item | basename }}
+  with_fileglob:
+    - ../templates/dashboard/icons/*
+
+- name: Deploy DashMachine
   docker_container:
     name: dashboard
     image: rmountjoy/dashmachine
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
     mounts:
-      - source: "/srv/config/dashboard"
-        target: "/dashmachine/dashmachine/user_data"
+      - source: "/srv/config/dashboard/icons"
+        target: "/dashmachine/dashmachine/user_data/icons"
+        type: bind
+      - source: "/srv/config/dashboard/config.ini"
+        target: "/dashmachine/dashmachine/user_data/config.ini"
         type: bind
     published_ports:
       - 5005:5000
@@ -202,7 +217,7 @@
   docker_container:
     name: hyperion
     image: sirfragalot/hyperion.ng:latest
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -219,7 +234,7 @@
   docker_container:
     name: esphome
     image: esphome/esphome
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -243,7 +258,7 @@
   docker_container:
     name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     dns_servers:
       - "{{dns_server}}"
@@ -269,7 +284,7 @@
   docker_container:
     name: bookstack_db
     image: mysql
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     networks:
       - name: bookstack_network
@@ -290,7 +305,7 @@
   docker_container:
     name: bookstack
     image: lscr.io/linuxserver/bookstack
-    pull: "{{update_containers}}"
+    pull: "{{ update_containers }}"
     restart_policy: "always"
     networks:
       - name: bookstack_network
