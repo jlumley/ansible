@@ -145,6 +145,21 @@ data_sources = bookstack_status
 tags = Infrastructure
 groups = public
 
+[budget_status]
+platform = http_status
+resource = https://budget.local.jlumley.com
+return_codes = 2xx, 3xx
+
+[Budget]
+prefix = https://
+url = budget.local.jlumley.com
+icon = static/images/icons/budget-logo.png
+sidebar_icon = static/images/icons/budget-logo.png
+description = Simple straight forward zero-based budgetting app
+data_sources = budget_status
+tags = Infrastructure
+groups = public
+
 [pfsense_status]
 platform = http_status
 resource = http://192.168.67.1

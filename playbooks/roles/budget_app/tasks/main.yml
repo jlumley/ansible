@@ -1,0 +1,26 @@
+- name: Create config dirs
+  file:
+    owner: "{{ item.path_owner }}"
+    group: "{{ item.path_group }}"
+    state: "directory"
+    path: "/srv/config/{{item.path}}"
+  loop:
+    - path_owner: "1000"
+      path_group: "1000"
+      path: "budget"
+
+- name: Deploy Budget App
+  docker_container:
+    name: budget_app
+    image: ghcr.io/jlumley/giraffe-budget
+    pull: "{{ update_containers }}"
+    restart_policy: "always"
+    entrypoint: "/bin/sh -c /src/bin/start.sh"
+    published_ports:
+      - 1980:80
+    mounts:
+      - source: "/srv/config/budget"
+        target: "/data"
+        type: bind
+    env:
+      TZ: "America/Toronto"

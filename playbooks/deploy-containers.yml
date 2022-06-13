@@ -70,4 +70,5 @@
     - common
     - infrastructure_containers
     - media_containers
+    - budget_app
     - container_restart

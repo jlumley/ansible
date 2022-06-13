@@ -6,7 +6,6 @@
 # - prowlarr
 # - sonarr
 # - radarr
-# - lidarr
 
 - name: Deploy PIA VPN client
   docker_container:
@@ -53,7 +52,6 @@
       - 9696:9696 # prowlarr
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
-      - 8686:8686 # lidarr
 
 - name: Deploy Plex
   docker_container:
@@ -84,9 +82,6 @@
         type: bind
       - source: "/data/plex-media/movies"
         target: "/movies"
-        type: bind
-      - source: "/data/plex-media/music"
-        target: "/music"
         type: bind
       - source: "/data/plex-media/demos"
         target: "/demos"
@@ -184,5 +179,3 @@
       image: linuxserver/sonarr:latest
     - name: radarr
       image: linuxserver/radarr:nightly
-    - name: lidarr
-      image: linuxserver/lidarr:latest
