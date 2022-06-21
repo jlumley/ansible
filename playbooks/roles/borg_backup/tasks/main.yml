@@ -87,24 +87,14 @@
     mode: 0700
   loop:
     - {
-        borgbase_repo: "{{borg_base_secrets.custom_fields.media_repo}}",
-        backup_paths: /srv/config/sonarr/Backups/ /srv/config/radarr/Backups/ /srv/config/prowlarr/Backups/ /srv/config/qbittorrent/ /srv/config/plex/,
-        repo_key: "{{borg_base_secrets.custom_fields.media_repo_key}}",
-        name: jlumley-media,
-        keep_hourly: 2,
-        keep_daily: 2,
-        keep_weekly: 1,
-        keep_monthly: 1,
-      }
-    - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.infrastructure_repo}}",
-        backup_paths: /srv/config/home-assistant/ /srv/config/mosquitto/config/ /srv/config/unifi/data/backup/ /srv/config/dashboard/ /srv/config/bookstack/,
+        backup_paths: /srv/config/,
         repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
         name: jlumley-infrastructure,
         keep_hourly: 2,
         keep_daily: 2,
         keep_weekly: 1,
-        keep_monthly: 1,
+        keep_monthly: 2,
       }
     - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.frigate_repo}}",
@@ -139,7 +129,6 @@
     name: "back up {{item}}"
     job: "/srv/mgmt/borg_backup_{{ item }}.sh"
   loop:
-    - jlumley-media
     - jlumley-infrastructure
     - jlumley-frigate
 

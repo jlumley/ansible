@@ -17,10 +17,4 @@
     - name: Install Arch Desktop Apps
       role: desktop_apps
 
-    - name: Install Requirements for Macbooks
-      role: macbook_arch
-      when: is_macbook == "y" 
-
-
-
 

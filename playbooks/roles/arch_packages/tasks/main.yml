@@ -22,7 +22,6 @@
     name: "{{ item }}"
     state: latest
   loop:
-    - "alacritty"
     - "curl"
     - "docker"
     - "firefox"
@@ -49,41 +48,11 @@
     src: "global_vimrc.j2" 
     dest: "/etc/vimrc"
 
-- name: Add Alacritty config file
-  become: yes
-  become_user: jlumley
-  template:
-    src: "global_alacritty_conf.j2"
-    dest: "/home/jlumley/.alacritty.yml"
-
 - name: Add profile files to be sourced
   template:
     src: "etc_bashrc.j2"
     dest: "/etc/bash.bashrc"
 
-
-- name: Fetch Package Repositories
-  git:
-    repo: "{{item.repo}}"
-    dest: "/tmp/{{item.name}}"
-    version: "{{item.version}}"
-    clone: yes
-    force: yes
-  loop: 
-    - name: "xclip"
-      repo: "https://github.com/astrand/xclip.git"
-      version: "master"
-
-- name: Install xclip
-  command:
-    chdir: "/tmp/xclip"
-    cmd: "{{item}}"
-  loop:
-    - "autoreconf"
-    - "./configure"
-    - "make"
-    - "make install"
-    - "make install.man"
 
 - name: enable systemd services
   systemd:
