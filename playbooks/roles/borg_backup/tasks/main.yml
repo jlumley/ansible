@@ -80,7 +80,7 @@
 
 - name: Create borg backup script
   template:
-    src: default.j2
+    src: backup.j2
     dest: /srv/mgmt/borg_backup_{{ item.name }}.sh
     owner: admin
     group: admin
@@ -91,10 +91,10 @@
         backup_paths: /srv/config/,
         repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
         name: jlumley-infrastructure,
-        keep_hourly: 2,
-        keep_daily: 2,
-        keep_weekly: 1,
-        keep_monthly: 2,
+        keep_hourly: 3,
+        keep_daily: 7,
+        keep_weekly: 4,
+        keep_monthly: 3,
       }
     - {
         borgbase_repo: "{{borg_base_secrets.custom_fields.frigate_repo}}",
@@ -105,6 +105,25 @@
         keep_daily: 2,
         keep_weekly: 0,
         keep_monthly: 0,
+      }
+
+- name: Create borg restore script
+  template:
+    src: restore.j2
+    dest: /srv/mgmt/borg_restore_{{ item.name }}.sh
+    owner: admin
+    group: admin
+    mode: 0700
+  loop:
+    - {
+        borgbase_repo: "{{borg_base_secrets.custom_fields.infrastructure_repo}}",
+        repo_key: "{{borg_base_secrets.custom_fields.infrastructure_repo_key}}",
+        name: jlumley-infrastructure
+      }
+    - {
+        borgbase_repo: "{{borg_base_secrets.custom_fields.frigate_repo}}",
+        repo_key: "{{borg_base_secrets.custom_fields.frigate_repo_key}}",
+        name: jlumley-frigate,
       }
 
 # TODO: Test BorgBase repo keys
@@ -126,9 +145,9 @@
   cron:
     user: admin
     special_time: hourly
-    name: "back up {{item}}"
-    job: "/srv/mgmt/borg_backup_{{ item }}.sh"
+    name: "back up {{ item.name }}"
+    job: "/srv/mgmt/borg_backup_{{ item.name }}.sh"
   loop:
-    - jlumley-infrastructure
-    - jlumley-frigate
+    - name: jlumley-infrastructure
+    - name: jlumley-frigate
 

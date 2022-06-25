@@ -1,0 +1,24 @@
+#!/bin/bash
+# managed by ansible
+
+
+DATE=`date +%Y-%h-%d-%H:%M`
+export BORG_PASSPHRASE={{ item.repo_key }}
+eval $(ssh-agent) > /dev/null
+ssh-add -q /secrets/borgbase_rsa_key
+
+# test repo keys
+if [[ $# -eq 0 ]]; then
+  
+  borg list {{ item.borgbase_repo }}
+  kill "${SSH_AGENT_PID}"
+  exit 0
+
+fi; 
+
+echo "Extracting borg backup"
+echo "Archive : $1"
+echo "Pattern : $2"
+borg extract {{ item.borgbase_repo }}::$1 $2
+
+kill "${SSH_AGENT_PID}"

@@ -4,6 +4,7 @@
     name: pkg-builder
 
 - name: Create pkg-builder user
+  become: yes
   user:
     name: pkg-builder
     shell: /bin/bash
