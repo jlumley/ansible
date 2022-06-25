@@ -113,16 +113,16 @@
     uid: 2023
     shell: /bin/bash
 
-- name: Create Bookstack group on host
+- name: Create Notes group on host
   ansible.builtin.group:
-    name: bookstack
+    name: notes
     gid: 2024
     state: present
 
-- name: Create Bookstack user on host
+- name: Create Notes user on host
   ansible.builtin.user:
-    name: bookstack
-    group: bookstack
+    name: notes
+    group: notes
     uid: 2024
     shell: /bin/bash
     state: present

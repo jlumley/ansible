@@ -9,6 +9,15 @@
 # - zigbee2mqtt
 # - logseq
 
+- name: Clean out old configs
+  file:
+    state: "absent"
+    path: "/srv/config/{{item.path}}"
+  loop:
+    - path: "nginx/proxy-confs"
+    - path: "bookstack"
+    - path: "dashboard"
+
 - name: Create config dirs
   file:
     owner: "{{ item.path_owner }}"
@@ -45,12 +54,8 @@
       path: "zigbee2mqtt"
     - path_owner: "2024"
       path_group: "2024"
-      path: "bookstack/config"
-    - path_owner: "2024"
-      path_group: "2024"
-      path: "bookstack/db"
-
-
+      path: "notes"
+  
 - name: Deploy Unifi Controller
   docker_container:
     name: unifi-controller
@@ -65,7 +70,7 @@
     mounts:
       - source: "/srv/config/unifi"
         target: "/config"
-        type: bind
+        type: "bind"
     published_ports:
       - 3478:3478/udp
       - 10001:10001/udp
@@ -106,11 +111,11 @@
     mounts:
       - source: "/srv/config/nginx/proxy-confs"
         target: "/config/nginx/proxy-confs/"
-        type: bind
+        type: "bind"
       - source: "/secrets/cloudflare.ini"
         target: "/config/dns-conf/cloudflare.ini"
         read_only: yes
-        type: bind
+        type: "bind"
     network_mode: host
 
 - name: Deploy Mosquitto MQTT
@@ -128,7 +133,7 @@
     mounts:
       - source: "/srv/config/mosquitto"
         target: "/mosquitto"
-        type: bind
+        type: "bind"
 
 - name: Create Frigate config
   template:
@@ -154,13 +159,13 @@
       - source: "/etc/localtime"
         target: "/etc/localtime"
         read_only: yes
-        type: bind
+        type: "bind"
       - source: "/srv/config/frigate/config"
         target: "/config"
-        type: bind
+        type: "bind"
       - source: "/data/frigate"
         target: "/media/frigate"
-        type: bind
+        type: "bind"
       - target: /tmp/cache
         type: tmpfs
         tmpfs_size: 1G
@@ -181,7 +186,7 @@
     mounts:
       - source: "/srv/config/home-assistant"
         target: "/config"
-        type: bind
+        type: "bind"
 
 - name: Create Dashmachine config
   template:
@@ -206,10 +211,10 @@
     mounts:
       - source: "/srv/config/dashboard/icons"
         target: "/dashmachine/dashmachine/user_data/icons"
-        type: bind
+        type: "bind"
       - source: "/srv/config/dashboard/config.ini"
         target: "/dashmachine/dashmachine/user_data/config.ini"
-        type: bind
+        type: "bind"
     published_ports:
       - 5005:5000
 
@@ -224,7 +229,7 @@
     mounts:
       - source: "/srv/config/hyperion"
         target: "/root/.hyperion:rw"
-        type: bind
+        type: "bind"
     published_ports:
       - 19445:19445
       - 19444:19444
@@ -242,10 +247,10 @@
     mounts:
       - source: "/srv/config/esphome"
         target: "/config"
-        type: bind
+        type: "bind"
       - source: "/etc/localtime"
         target: "/ettc/localtime"
-        type: bind
+        type: "bind"
         read_only: yes  
   
 
@@ -265,10 +270,10 @@
     mounts:
       - source: "/srv/config/zigbee2mqtt"
         target: "/app/data"
-        type: bind 
+        type: "bind" 
       - source: "/run/udev"
         target: "/run/udev"
-        type: bind
+        type: "bind"
         read_only: yes
     network_mode: host
     env:
@@ -276,53 +281,35 @@
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
 
-- name: Create Bookstack Network
-  docker_network:
-    name: bookstack_network
-
-- name: Deploy Bookstack MYSQL DB
+- name: Deploy VS code for notes
   docker_container:
-    name: bookstack_db
-    image: mysql
+    name: vs_code_notes
+    image: lscr.io/linuxserver/code-server:latest
     pull: "{{ update_containers }}"
     restart_policy: "always"
-    networks:
-      - name: bookstack_network
-    mounts:
-      - source: "/srv/config/bookstack/db"
-        target: "/config"
-        type: bind  
-    env:
-      TZ: "America/Toronto"
-      PUID: "2024"
-      PGID: "2024"
-      MYSQL_ROOT_PASSWORD: "{{bookstack_secrets.custom_fields.db_root_password}}"
-      MYSQL_DATABASE: bookstackapp
-      MYSQL_USER: "{{bookstack_secrets.custom_fields.db_user}}"
-      MYSQL_PASSWORD: "{{bookstack_secrets.custom_fields.db_password}}"
-
-- name: Deploy Bookstack
-  docker_container:
-    name: bookstack
-    image: lscr.io/linuxserver/bookstack
-    pull: "{{ update_containers }}"
-    restart_policy: "always"
-    networks:
-      - name: bookstack_network
     published_ports:
-      - 19080:80
-    mounts:
-      - source: "/srv/config/bookstack/config"
-        target: "/config"
-        type: bind
+      - 8444:8443
     env:
       TZ: "America/Toronto"
       PUID: "2024"
       PGID: "2024"
-      APP_URL: "https://wiki.local.jlumley.com/"
-      DB_HOST: "bookstack_db"
-      DB_DATABASE: "bookstackapp"
-      DB_USER: "{{bookstack_secrets.custom_fields.db_user}}"
-      DB_PASS: "{{bookstack_secrets.custom_fields.db_password}}"
+      DEFAULT_WORKSPACE: "/config/workspace"
+      PROXY_DOMAIN: "notes.local.jlumley.com"
+    mounts: 
+      - source: "/srv/config/notes"
+        target: "/config"
+        type: "bind"
 
 
+- name: Prune everything (including non-dangling images)
+  community.docker.docker_prune:
+    containers: yes
+    images: yes
+    images_filters:
+      dangling: false
+    networks: yes
+    volumes: yes
+    builder_cache: yes
+
+- name: restart all containers
+  shell: "docker restart $(docker ps -q)"

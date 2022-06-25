@@ -130,18 +130,13 @@ data_sources = frigate_status
 tags = Infrastructure
 groups = public
 
-[bookstack_status]
-platform = http_status
-resource = https://wiki.local.jlumley.com
-return_codes = 2xx,3xx
 
-[BookStack]
+[Notes]
 prefix = https://
-url = wiki.local.jlumley.com
+url = notes.local.jlumley.com
 icon = static/images/apps/bookstack.png
 sidebar_icon = static/images/apps/bookstack.png
-description = BookStack is a simple, self-hosted, easy-to-use platform for organising and storing information
-data_sources = bookstack_status
+description = VS Code for making notes
 tags = Infrastructure
 groups = public
 
