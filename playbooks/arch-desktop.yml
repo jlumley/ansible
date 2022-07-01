@@ -3,6 +3,19 @@
   hosts: localhost
   gather_facts: true
   
+  vars_prompt:
+    - name: keepass_pw
+      prompt: "Enter KeePass Password"
+
+  pre_tasks:
+    - name: "spotify Secrets"
+      keepassxc:
+        database: "/secrets/Passwords.kdbx"
+        password: "{{keepass_pw}}"
+        entry: "spotify"
+      register: "spotify_secrets"
+      delegate_to: "localhost"
+
   roles:
     - name: Install Packages for Arch
       role: arch_packages

@@ -19,6 +19,7 @@
     validate: 'visudo -cf %s'
 
 - name: Install Development Dependencies
+  become: yes
   package:
     name: "{{ item }}"
     state: latest
@@ -36,6 +37,7 @@
     - "vim"
     - "code"
     - "keepassxc"
+    - "zsh"
 
 - name: Install pip dependencies
   pip: 

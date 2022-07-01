@@ -14,4 +14,46 @@
     name: "{{item}}"
   loop:
     - "1password"
+    - "xpenguins"
+    - "spotifyd"
+    - "spotify-tui"
+
+- name: Add user systemd dir
+  file:
+    name: "~/.config/systemd/user/"
+    state: directory
+    owner: "jlumley"
+    group: "jlumley"
+
+- name: Add user spotifyd dir
+  file:
+    name: "~/.config/spotifyd"
+    state: directory
+    owner: "jlumley"
+    group: "jlumley"
+
+- name: Setup spotifyd
+  template:
+    src: "spotifyd_service.j2"
+    dest: "~/.config/systemd/user/spotifyd.service"
+    owner: "jlumley"
+    group: "jlumley"
+
+- name: Setup spotifyd
+  template:
+    src: "spotifyd_conf.j2"
+    dest: "~/.config/spotifyd/spotifyd.conf"
+    owner: "jlumley"
+    group: "jlumley"
+
+- name: enable systemd services
+  systemd:
+    name: "{{item}}"
+    enabled: true
+    state: started
+    scope: user
+  loop:
+    - "spotifyd"
+
+
 
