@@ -5,7 +5,7 @@ A configuration-as-code repository for managing the jlumley.com domain
 
 ## Getting Started
 
-1. `sudo apt install git vim python3 python3-pip`
+1. `sudo apt install git vim python3 python3-pip rsync`
 2. `python3 -m pip install --user ansible`
 3. `mkdir git && cd git`
 4. `git config --global user.name "Jeremy Lumley"`
